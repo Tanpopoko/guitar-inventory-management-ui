@@ -65,7 +65,8 @@
     </div>
 
     <script>
-        function addGuitar() {
+        let host = "http://localhost:8080";
+        async function addGuitar() {
             let serialNumberNode = document.getElementById("serialNumber");
             let serialNumber = duckNumberNode.value;
             let priceNode = document.getElementById("price");
@@ -81,16 +82,47 @@
             let backWoodNode = document.getElementById("backWood");
             let backWood = duckNumberNode.value;
 
-            let guitar = {
-                serialNumber: serialNumber,
-                price: price,
-                builder: builder,
-                model: model,
-                type: type,
-                topWood: topWood,
-                backWood: backWood
+            if (
+                (serialNumber === "") ||
+                (price === "") ||
+                (builder === "") ||
+                (model === "") ||
+                (type === "") ||
+                (topWood === "") ||
+                (backWood === "")
+            ) {
+                alert("Please fill out all fields.");
+            } else {
+                let guitar = {
+                    serialNumber: serialNumber,
+                    price: price,
+                    builder: builder,
+                    model: model,
+                    type: type,
+                    topWood: topWood,
+                    backWood: backWood
+                }
+
+                let request = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(guitar)
+                };
+
+                alert("You entered: " + JSON.stringify(guitar));
+                let response = await fetch(host + "/guitars", request);
+                if(response.status == 200) {
+                    let result = await response.json();
+                    if(result) {
+                        message = "The guitar was added to the system";
+                    } else {
+                        message = "Something went wrong. Please try again or contact the customer support team.";
+                    }
+                }
+                alert(message);
             }
-            alert("You entered: " + JSON.stringify(guitar));
         }
     </script>
 
