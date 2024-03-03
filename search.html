@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- For styling -->
+    <style>
+        .buttons {
+            float: right;
+            font-size: 50px;
+            padding: 5px;
+        }
+
+        .home {
+            horiz-align: left;
+            font-size: 20px;
+            width: 200px;
+        }
+
+        .column {
+            margin: 100px;
+            float: left;
+            width: 50%;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 35px;
+        }
+        .row::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+    </style>
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <script>
+        let guitars = [];
+        /*[
+            { serialNumber: XYZ123, price: "1000", builder: "Fender", model: "Telecaster", type: "electric", topWood: "oak", backWood: "NA" },
+            { serialNumber: JSY214, price: "300", builder: "Harmony", model: "Default", type: "electric", topWood: "birch", backWood: "NA" },
+            { serialNumber: HSO678, price: "300", builder: "Yamaha", model: "FS800", type: "acoustic", topWood: "dark", backWood: "dark" },
+            { serialNumber: YCH646, price: "1100", builder: "Taylor", model: "214ce", type: "acoustic", topWood: "maple", backWood: "oak" },
+            { serialNumber: KUO994, price: "800", builder: "Fender", model: "Stratocaster", type: "electric", topWood: "mahagony", backWood: "NA" },
+        ];*/
+
+        let host = "http://localhost:8080";
+        async function getAll() {
+            return fetch(host + "/guitars")
+                .then(response => response.json())
+                .catch(error => {
+                    console.log(error);
+                    alert("Something went wrong!");
+                    return [];
+                });
+        }
+        async function search() {
+
+            if(guitars.length == 0) {
+                guitars = await getAll();
+            }
+
+            if(guitars.length == 0) {
+                alert("There is no guitars data or there was an error fetching data.")
+            } else {
+                let serialNumber = document.getElementById("serialNumber").value;
+                let price = document.getElementById("price").value;
+                let builder = document.getElementById("builder").value;
+                let model = document.getElementById("model").value;
+                let type = document.getElementById("type").value;
+                let topWood = document.getElementById("topWood").value;
+                let backWood = document.getElementById("backWood").value;
+                let table = document.getElementById("searchResult");
+                table.innerHTML = "";
+                for (let guitar of guitars) {
+                    if ((!serialNumber || guitar.serialNumber.toLowerCase() == serialNumber.toLowerCase()) &&
+                        (!price || guitar.price.toLowerCase() == price.toLowerCase()) &&
+                        (!builder || guitar.builder.toLowerCase() == builder.toLowerCase()) &&
+                        (!model || guitar.model.toLowerCase() == model.toLowerCase()) &&
+                        (!type || guitar.type.toLowerCase() == type.toLowerCase()) &&
+                        (!topWood || guitar.topWood.toLowerCase() == topWood.toLowerCase()) &&
+                        (!backWood || guitar.backWood.toLowerCase() == backWood.toLowerCase())) {
+                        let row = document.createElement("tr");
+                        let cell1 = document.createElement("td");
+                        let serialNumber = document.createTextNode(guitar.serialNumber);
+                        let price = document.createTextNode(guitar.price);
+                        let builder = document.createTextNode(guitar.builder);
+                        let model = document.createTextNode(guitar.model);
+                        let type = document.createTextNode(guitar.type);
+                        let topWood = document.createTextNode(guitar.topWood);
+                        let backWood = document.createTextNode(guitar.backWood);
+                        cell1.appendChild(serialNumber);
+                        cell1.appendChild(price);
+                        cell1.appendChild(builder);
+                        cell1.appendChild(model);
+                        cell1.appendChild(type);
+                        cell1.appendChild(topWood);
+                        cell1.appendChild(backWood);
+                        row.appendChild(cell1);
+                        table.appendChild(row);
+                    }
+                }
+            }
+        }
+    </script>
+    <div>
+        <div>
+            <a class="home" href="index.html">Guitar Inventory Management</a>
+            <a class="buttons" href="index.html">About</a>
+            <a class="buttons" href="add.html">Add</a>
+            <a class="buttons" href="search.html">Search</a>
+        </div>
+        <div class = "row">
+            <div class = "column">
+                <label>Serial Number:</label>
+                <input id="serialNumber"/> <br />
+                <label>Price:</label>
+                <input id="price"/> <br />
+                <label>Builder:</label>
+                <input id="builder"/> <br />
+                <label>Model:</label>
+                <input id="model"/> <br />
+                <label>Type:</label>
+                <input id="type"/> <br />
+                <label>Top Wood:</label>
+                <input id="topWood"/> <br />
+                <label>Back Wood:</label>
+                <input id="backWood"/> <br />
+                <button onclick="search()">Search</button>
+
+                <br />
+            </div>
+        </div>
+        <div class = "row">
+            <table>
+                <thead>
+                <tr>
+                    <th>Serial Number</th>
+                    <th>Price</th>
+                    <th>Builder</th>
+                    <th>Model</th>
+                    <th>Type</th>
+                    <th>Top Wood</th>
+                    <th>Back Wood</th>
+                </tr>
+                </thead>
+                <tbody id="searchResult">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
